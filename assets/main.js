@@ -176,10 +176,6 @@ products.addEventListener("click", function (e) {
 
         // logica para el carrito
         if (objCart[id]) {
-            let findProduct = foods.find(function (food) {
-                return food.id === id;
-            });
-
             if (findProduct.stock === objCart[id].amount) {
                 alert("No tengo mas en stock");
             } else {
