@@ -61,8 +61,52 @@ let foods = [
 
 const products = document.querySelector(".products");
 const cartProducts = document.querySelector(".carProducts");
+const carTotal = document.querySelector(".carTotal");
+const amountCart = document.querySelector(".amountCart");
 
 let objCart = {};
+
+function printAmountCart() {
+    let sum = 0;
+
+    const arrayCart = Object.values(objCart);
+
+    if (!arrayCart.length) {
+        amountCart.style.display = "none";
+        return;
+    }
+
+    amountCart.style.display = "inline-block";
+
+    arrayCart.forEach(function ({ amount }) {
+        sum += amount;
+    });
+
+    amountCart.textContent = sum;
+}
+
+function printTotalCart() {
+    const arrayCart = Object.values(objCart);
+
+    if (!arrayCart.length) {
+        carTotal.innerHTML = `
+            <h3>No hay nada, a comprar!!!</h3>
+        `;
+
+        return;
+    }
+
+    let sum = 0;
+
+    arrayCart.forEach(function ({ amount, price }) {
+        sum += amount * price;
+    });
+
+    carTotal.innerHTML = `
+            <h3>Total a pagar ${sum}</h3>
+            <button class="btn btn__buy">Comprar</button>
+        `;
+}
 
 function printProductsInCart() {
     let html = "";
@@ -132,7 +176,15 @@ products.addEventListener("click", function (e) {
 
         // logica para el carrito
         if (objCart[id]) {
-            objCart[id].amount++;
+            let findProduct = foods.find(function (food) {
+                return food.id === id;
+            });
+
+            if (findProduct.stock === objCart[id].amount) {
+                alert("No tengo mas en stock");
+            } else {
+                objCart[id].amount++;
+            }
         } else {
             objCart[id] = {
                 ...findProduct,
@@ -142,6 +194,8 @@ products.addEventListener("click", function (e) {
     }
 
     printProductsInCart();
+    printTotalCart();
+    printAmountCart();
 });
 
 cartProducts.addEventListener("click", function (e) {
@@ -178,6 +232,39 @@ cartProducts.addEventListener("click", function (e) {
     }
 
     printProductsInCart();
+    printTotalCart();
+    printAmountCart();
+});
+
+carTotal.addEventListener("click", function (e) {
+    if (e.target.classList.contains("btn__buy")) {
+        const res = confirm("Seguro quieres hacer la compra");
+
+        if (!res) return;
+
+        let newArray = [];
+
+        foods.forEach(function (food) {
+            if (food.id === objCart[food.id]?.id) {
+                newArray.push({
+                    ...food,
+                    stock: food.stock - objCart[food.id].amount,
+                });
+            } else {
+                newArray.push(food);
+            }
+        });
+
+        foods = newArray;
+        objCart = {};
+
+        printProducts();
+        printProductsInCart();
+        printTotalCart();
+        printAmountCart();
+    }
 });
 
 printProducts();
+printTotalCart();
+printAmountCart();

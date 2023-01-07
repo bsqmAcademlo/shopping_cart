@@ -18,6 +18,26 @@ img {
 .bx-cart-add {
     font-size: 2rem;
     cursor: pointer;
+
+    position: relative;
+}
+
+.amountCart {
+    position: absolute;
+    display: inline-block;
+
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    bottom: -7px;
+    right: -7px;
+
+    background-color: #000;
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 5px;
 }
 
 .btn {
@@ -28,7 +48,8 @@ img {
     cursor: pointer;
 }
 
-.btn__add {
+.btn__add,
+.btn__buy {
     background-color: lightgreen;
     width: 100%;
 }
@@ -43,7 +64,7 @@ header > nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1rem;
+    padding: 0 2rem;
     height: 50px;
 
     max-width: 1024px;
@@ -121,5 +142,12 @@ header > nav {
 
 .carTotal {
     height: 20%;
-    background-color: green;
+    background-color: #f7f5eb;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1rem;
+    flex-direction: column;
+    gap: 1rem;
 }
