@@ -3,7 +3,7 @@ let foods = [
         id: "0",
         name: "Taco",
         price: 1200,
-        stock: 5,
+        stock: 10,
         urlImage: "./assets/images/algoRaro.png",
     },
     {
@@ -56,6 +56,7 @@ const products = document.querySelector(".products");
 const cartProducts = document.querySelector(".carProducts");
 const carTotal = document.querySelector(".carTotal");
 const amountCart = document.querySelector(".amountCart");
+const btnRefresh = document.querySelector(".btn__refresh");
 
 foods = JSON.parse(localStorage.getItem("foods")) || foods;
 let objCart = JSON.parse(localStorage.getItem("objCart")) || {};
@@ -268,6 +269,11 @@ carTotal.addEventListener("click", function (e) {
         printTotalCart();
         printAmountCart();
     }
+});
+
+btnRefresh.addEventListener("click", function () {
+    localStorage.clear();
+    window.location.reload();
 });
 
 printProducts();
