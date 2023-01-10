@@ -54,6 +54,12 @@ img {
     width: 100%;
 }
 
+.btn__NA {
+    width: 100%;
+    background-color: red;
+    cursor: no-drop;
+}
+
 header {
     background-color: #579bb1;
     position: fixed;

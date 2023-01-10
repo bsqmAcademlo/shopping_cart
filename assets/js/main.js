@@ -50,21 +50,34 @@ let foods = [
     },
 ];
 
-{
-    const iconCart = document.querySelector(".bx-cart-add");
-    const contentCart = document.querySelector(".contentCar");
-
-    iconCart.addEventListener("click", function () {
-        contentCart.classList.toggle("contentCar__show");
-    });
-}
+import "./handleNavbar.js";
 
 const products = document.querySelector(".products");
 const cartProducts = document.querySelector(".carProducts");
 const carTotal = document.querySelector(".carTotal");
 const amountCart = document.querySelector(".amountCart");
 
-let objCart = {};
+foods = JSON.parse(localStorage.getItem("foods")) || foods;
+let objCart = JSON.parse(localStorage.getItem("objCart")) || {};
+
+function verifyAddToCart(findProduct, id) {
+    if (findProduct.stock === objCart[id].amount) {
+        alert("No tengo mas en stock");
+    } else {
+        objCart[id].amount++;
+    }
+}
+
+function seacrProduct(id) {
+    return foods.find(function (food) {
+        return food.id === id;
+    });
+}
+
+function deleteProduct(id) {
+    const res = confirm("Seguro quieres eliminar este producto");
+    if (res) delete objCart[id];
+}
 
 function printAmountCart() {
     let sum = 0;
@@ -142,6 +155,10 @@ function printProducts() {
     let html = "";
 
     foods.forEach(function ({ id, name, price, stock, urlImage }) {
+        const typeButton = stock
+            ? '<button class="btn btn__add">Comprar</button>'
+            : '<button class="btn btn__NA">N / A</button>';
+
         html += `
             <div class="product">
                 <div class="product__img">
@@ -155,7 +172,7 @@ function printProducts() {
                 </div>
 
                 <div class="product__options" id="${id}">
-                    <button class="btn btn__add">Comprar</button>
+                    ${typeButton}
                 </div>
             </div>
         `;
@@ -170,23 +187,21 @@ products.addEventListener("click", function (e) {
         const id = e.target.parentElement.id;
 
         // vamos a obtener el producto por id
-        let findProduct = foods.find(function (food) {
-            return food.id === id;
-        });
+        let findProduct = seacrProduct(id);
 
-        // logica para el carrito
+        if (findProduct.stock === 0) return alert("Ya no tengo mas");
+
         if (objCart[id]) {
-            if (findProduct.stock === objCart[id].amount) {
-                alert("No tengo mas en stock");
-            } else {
-                objCart[id].amount++;
-            }
+            // logica para el carrito
+            verifyAddToCart(findProduct, id);
         } else {
             objCart[id] = {
                 ...findProduct,
                 amount: 1,
             };
         }
+
+        localStorage.setItem("objCart", JSON.stringify(objCart));
     }
 
     printProductsInCart();
@@ -199,8 +214,7 @@ cartProducts.addEventListener("click", function (e) {
         const id = e.target.parentElement.id;
 
         if (objCart[id].amount === 1) {
-            const res = confirm("Seguro quieres eliminar este producto");
-            if (res) delete objCart[id];
+            deleteProduct(id);
         } else {
             objCart[id].amount--;
         }
@@ -208,24 +222,16 @@ cartProducts.addEventListener("click", function (e) {
 
     if (e.target.classList.contains("bx-plus")) {
         const id = e.target.parentElement.id;
-
-        let findProduct = foods.find(function (food) {
-            return food.id === id;
-        });
-
-        if (findProduct.stock === objCart[id].amount) {
-            alert("No tengo mas en stock");
-        } else {
-            objCart[id].amount++;
-        }
+        let findProduct = seacrProduct(id);
+        verifyAddToCart(findProduct, id);
     }
 
     if (e.target.classList.contains("bx-trash")) {
         const id = e.target.parentElement.id;
-
-        const res = confirm("Seguro quieres eliminar este producto");
-        if (res) delete objCart[id];
+        deleteProduct(id);
     }
+
+    localStorage.setItem("objCart", JSON.stringify(objCart));
 
     printProductsInCart();
     printTotalCart();
@@ -254,6 +260,9 @@ carTotal.addEventListener("click", function (e) {
         foods = newArray;
         objCart = {};
 
+        localStorage.setItem("objCart", JSON.stringify(objCart));
+        localStorage.setItem("foods", JSON.stringify(foods));
+
         printProducts();
         printProductsInCart();
         printTotalCart();
@@ -264,3 +273,4 @@ carTotal.addEventListener("click", function (e) {
 printProducts();
 printTotalCart();
 printAmountCart();
+printProductsInCart();
